@@ -29,6 +29,22 @@ router.post("/", async (req, res) => {
     res.status(500).json({ message: "internal server error" });
   }
 });
+//GET /api/bookings - احضار جميع الحجوزات للأدمن
+router.get("/", protect, adminOnly, async (req, res) => {
+  try {
+    console.log('📋 جاري جلب جميع الحجوزات للأدمن');
+    const bookings = await Booking.find()
+      .populate("serviceId", "name imageUrl")
+      .sort({ createdAt: -1 });
+    
+    console.log(`✅ تم جلب ${bookings.length} حجز`);
+    res.json(bookings);
+  } catch (error) {
+    console.error('❌ خطأ في جلب الحجوزات:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 //GET /api/bookings/user/:userId - احضار جميع الحجوزات للمستخدم
 router.get("/user/:userId", async (req, res) => {
   try {
