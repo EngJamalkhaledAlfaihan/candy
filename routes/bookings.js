@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Booking = require("../models/Booking");
 const Service = require("../models/Service");
+const { protect, adminOnly } = require("../middleware/authMiddleware");
 
 //POST /api/bookings - انشاء حجز جديد
 
