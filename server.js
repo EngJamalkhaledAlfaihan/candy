@@ -12,9 +12,39 @@ dotenv.config();
 
 const app = express();
 
-// وصلات
-app.use(cors());
+// إعدادات CORS
+const corsOptions = {
+  origin: function (origin, callback) {
+    // السماح للتطبيقات المحمولة (بدون origin) والمصادر المحددة
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'https://candy-maids-api.onrender.com'
+    ];
+    
+    // السماح للتطبيقات المحمولة (التي لا ترسل origin)
+    if (!origin) return callback(null, true);
+    
+    // السماح في التطوير لجميع المصادر
+    if (process.env.NODE_ENV === 'development') return callback(null, true);
+    
+    // في الإنتاج: فحص المصادر المسموحة
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('غير مسموح بواسطة CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// إضافة معالج OPTIONS للطلبات المسبقة
+app.options('*', cors(corsOptions));
 
 // توصيل قاعدة البيانات
 connectDB();
