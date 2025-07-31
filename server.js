@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const servicesRoute = require('./routes/services');
 const bookingsRoute = require('./routes/bookings');
 const paymentsRoute = require('./routes/payments');
+const authRoute = require('./routes/auth');
 const cors = require('cors');
 
 dotenv.config();
@@ -22,6 +23,7 @@ connectDB();
 app.use('/api/services', servicesRoute);
 app.use('/api/bookings', bookingsRoute);
 app.use('/api/payments', paymentsRoute);
+app.use('/api/auth', authRoute);
 // اختبار
 app.get('/', (req, res) => {
   res.send('مرحبًا بكم في واجهة Candy Maids API');

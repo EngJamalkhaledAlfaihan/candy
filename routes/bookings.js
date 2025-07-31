@@ -39,5 +39,29 @@ router.get("/user/:userId", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+// PUT /api/bookings/:id/status
+router.put('/:id/status', protect, adminOnly, async (req, res) => {
+  const { status } = req.body;
+  const allowedStatuses = ['pending', 'confirmed', 'completed', 'cancelled'];
 
+  if (!allowedStatuses.includes(status)) {
+    return res.status(400).json({ message: 'حالة غير صالحة' });
+  }
+
+  try {
+    const booking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!booking) {
+      return res.status(404).json({ message: 'الحجز غير موجود' });
+    }
+
+    res.json(booking);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
